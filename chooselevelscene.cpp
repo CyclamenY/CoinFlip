@@ -8,12 +8,13 @@
 #include <QDebug>
 #include <QFont>
 #include "fontmanager.h"
+#include <QSound>
 
 ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 {
     //配置选择关卡场景
     setFixedSize(320,588);
-    setWindowIcon(QIcon(":/animation/gold/res/Coin0001.png"));
+    setWindowIcon(QIcon(":/coins/res/Coin0001.png"));
     setWindowTitle(tr("选择难度！"));
     QMenuBar *mBar=menuBar();
     setMenuBar(mBar);   //加入菜单栏
@@ -27,9 +28,14 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
     MyPushButton *backButton=new MyPushButton(":/button/res/BackButton.png",":/button/res/BackButtonSelected.png");
     backButton->setParent(this);
     backButton->move(width()-backButton->width()-10,height()-backButton->height()-10);
+    //选择关卡音效
+    QSound *chooseSound=new QSound(":/wav/res/TapButtonSound.wav",this);
+    //返回音效
+    QSound *backSound=new QSound(":/wav/res/BackButtonSound.wav",this);
     //监听返回按钮按下事件
     connect(backButton,&MyPushButton::clicked,[=]()
     {
+        backSound->play();
         //这里需要返回到主场景，需要发送一个信号通知主场景再显示
         QTimer::singleShot(180,this,[=]()
         {
@@ -70,21 +76,24 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
         {
 //            QString str=QString("选择第%1关").arg(i+1);
 //            qDebug()<<str;
+            chooseSound->play();
             //随用随创建的对象，与关卡选择界面的编写理念不一样
             //所以在游戏界面返回时的操作也会不一样，详见下面
             playScene=new PlayScene(i+1);
             QTimer::singleShot(80,this,[=]()
             {
                 hide(); //自身隐藏
+                playScene->setGeometry(geometry());
                 playScene->show();//游戏场景显示
             });
             connect(playScene,&PlayScene::playSceneBack,[=]()
             {
+                setGeometry(playScene->geometry());
+                delete playScene;
                 show();
+                playScene=nullptr;
                 //当点击返回时，程序会直接删除游戏场景
                 //以便在下一次进入时创建一个新的游戏场景
-                delete playScene;
-                playScene=nullptr;
             });
         });
     }

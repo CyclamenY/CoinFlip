@@ -11,14 +11,15 @@
 #include "dataconfig.h"
 #include "chooselevelscene.h"
 #include "fontmanager.h"
-
+#include <QPropertyAnimation>
+#include <QSound>
 
 PlayScene::PlayScene(int levelNum)
 {
     levelIndex=levelNum;
     //初始化游戏场景
     setFixedSize(320,588);
-    setWindowIcon(QIcon(":/animation/gold/res/Coin0001.png"));
+    setWindowIcon(QIcon(":/coins/res/Coin0001.png"));
     setWindowTitle(tr("开始游玩吧！"));
     QMenuBar *mBar=menuBar();
     setMenuBar(mBar);   //加入菜单栏
@@ -28,6 +29,11 @@ PlayScene::PlayScene(int levelNum)
     {
         close();
     });
+    //添加音效
+        //添加翻金币音效
+    QSound *flipSound=new QSound(":/wav/res/ConFlipSound.wav",this);
+        //添加返回按键音效
+    QSound *backSound=new QSound(":/wav/res/BackButtonSound.wav",this);
     //放置返回按钮
     MyPushButton *backButton=new MyPushButton(":/button/res/BackButton.png",":/button/res/BackButtonSelected.png");
     backButton->setParent(this);
@@ -36,6 +42,8 @@ PlayScene::PlayScene(int levelNum)
     connect(backButton,&MyPushButton::clicked,[=]()
     {
         //qDebug()<<"返回";
+        //播放返回音效
+        backSound->play();
         //这里需要返回到主场景，需要发送一个信号通知关卡选择场景让其显示
         QTimer::singleShot(180,this,[=]()
         {
@@ -52,17 +60,16 @@ PlayScene::PlayScene(int levelNum)
     {
         font.setFamily(fontmanager->m_fontList.at(0));
     }
-    font.setPointSize(16);  //设置字号
+    font.setPointSize(20);  //设置字号
     QPalette palette;   //这里设置颜色不能直接写在构造函数里，会导致显示不正常
     palette.setColor(QPalette::WindowText,QColor(102,204,255));//#66ccff颜色
     QLabel *levelLabel=new QLabel(str,this);    //创建的label默认没有大小
     levelLabel->setPalette(palette);
     levelLabel->setFont(font);
     //设置label大小且移动到指定区域
-    levelLabel->setGeometry(30,height()-60,120,50);//前二参数为左上角坐标，后俩参数为宽和高
+    levelLabel->setGeometry(30,height()-60,160,50);//前二参数为左上角坐标，后俩参数为宽和高
     //加载关卡数据
     dataConfig config(this);
-    QVector<QVector<int>> levelData(4,QVector<int>(4));
     for(int i=0;i<4;++i)
     {
         auto data=config.mData[levelIndex];
@@ -71,6 +78,12 @@ PlayScene::PlayScene(int levelNum)
             levelData[i][j]=data[i][j];
         }
     }
+    //胜利图片加载
+    QPixmap winMap(":/background/res/LevelCompletedDialogBg.png");
+    winLabel->setGeometry(0,0,winMap.width(),winMap.height());
+    winLabel->setPixmap(winMap);
+    winLabel->move((width()-winMap.width())/2,-winMap.height());
+
     QPixmap pixmap(":/background/res/BoardNode.png");
     for(int i=0;i<4;++i)
     {
@@ -84,16 +97,39 @@ PlayScene::PlayScene(int levelNum)
             //创建金币或银币
             if(levelData[i][j]==1)
             {
-                MyCoin *goldCoin=new MyCoin(":/animation/gold/res/Coin0001.png");
-                goldCoin->setParent(this);
-                goldCoin->move(60+i*50,194+j*50);       //移动至金币框
+                str=":/coins/res/Coin0001.png";
             }
             else
             {
-                MyCoin *sliverCoin=new MyCoin(":/animation/sliver/res/Coin0008.png");
-                sliverCoin->setParent(this);
-                sliverCoin->move(60+i*50,194+j*50);     //移动至银币框
+                str=":/coins/res/Coin0008.png";
             }
+            MyCoin *coin=new MyCoin(str);
+            coin->setParent(this);
+            coin->move(60+i*50,194+j*50);
+            //赋予金币属性
+            coin->posX=i;
+            coin->posY=j;
+            coin->coinFlag=levelData[i][j]; //1为正面 0为反面
+            //将金币按钮放入专用二维数组里，以便后期维护
+            buttonCoin[i][j]=coin;
+            //点击金币进行翻转
+            connect(coin,&MyCoin::clicked,[=]()
+            {
+                //播放翻转音效
+                flipSound->play();
+                //禁用所有金币按钮
+                for(int i=0;i<4;++i)
+                {
+                    for(int j=0;j<4;++j)
+                    {
+                        buttonCoin[i][j]->isWin=true;
+                    }
+                }
+                coin->changeFlag();
+                levelData[i][j]=levelData[i][j]==1?0:1;
+                //翻转周围
+                changeRoundCoin(coin);
+            });
         }
     }
 }
@@ -107,4 +143,91 @@ void PlayScene::paintEvent(QPaintEvent *event)
     pixmap.load(":/background/res/Title.png");
     pixmap=pixmap.scaled(pixmap.width()*0.5,pixmap.height()*0.5);//进行缩放操作，返回一个新的pixmap
     painter.drawPixmap(10,30,pixmap);//画背景上的图标
+}
+
+void PlayScene::changeRoundCoin(MyCoin *coin)
+{
+    //延时翻转
+    QTimer::singleShot(300,this,[=]()
+    {
+        //翻转右侧
+        if(coin->posX+1<4)
+        {
+            buttonCoin[coin->posX+1][coin->posY]->changeFlag();
+            levelData[coin->posX+1][coin->posY]=levelData[coin->posX+1][coin->posY]==1?0:1;
+        }
+        //翻转左侧
+        if(coin->posX-1>-1)
+        {
+            buttonCoin[coin->posX-1][coin->posY]->changeFlag();
+            levelData[coin->posX-1][coin->posY]=levelData[coin->posX-1][coin->posY]==1?0:1;
+        }
+        //翻转下侧
+        if(coin->posY+1<4)
+        {
+            buttonCoin[coin->posX][coin->posY+1]->changeFlag();
+            levelData[coin->posX][coin->posY+1]=levelData[coin->posX][coin->posY+1]==1?0:1;
+        }
+        //翻转上侧
+        if(coin->posY-1>-1)
+        {
+            buttonCoin[coin->posX][coin->posY-1]->changeFlag();
+            levelData[coin->posX][coin->posY-1]=levelData[coin->posX][coin->posY-1]==1?0:1;
+        }
+        isWin=true;
+        for(int i=0;i<4;++i)
+        {
+            for(int j=0;j<4;++j)
+            {
+                if(levelData[i][j]==0)
+                {
+                    isWin=false;
+                    break;
+                }
+            }
+            if(!isWin)
+            {
+                break;
+            }
+        }
+        //解禁所有金币按钮
+        for(int i=0;i<4;++i)
+        {
+            for(int j=0;j<4;++j)
+            {
+                buttonCoin[i][j]->isWin=false;
+            }
+        }
+        if(isWin)
+        {
+            //qDebug()<<"胜利";
+            //播放胜利音效
+            winSound->play();
+            for(int i=0;i<4;++i)
+            {
+                for(int j=0;j<4;++j)
+                {
+                    buttonCoin[i][j]->isWin=true;
+                }
+            }
+            winAnimation();
+        }
+    });
+}
+
+void PlayScene::winAnimation()
+{
+
+    //将胜利的图片移动下来
+    QPropertyAnimation *animation=new QPropertyAnimation(winLabel,"geometry");
+    //设置时间间隔
+    animation->setDuration(1000);
+    //设置开始位置
+    animation->setStartValue(QRect(winLabel->x(),winLabel->y(),winLabel->width(),winLabel->height()));
+    //设置结束位置
+    animation->setEndValue(QRect(winLabel->x(),winLabel->y()+175,winLabel->width(),winLabel->height()));
+    //设置缓和曲线
+    animation->setEasingCurve(QEasingCurve::OutBounce);
+    //执行动画
+    animation->start();
 }

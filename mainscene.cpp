@@ -5,19 +5,27 @@
 #include <QPixmap>
 #include "mypushbutton.h"
 #include <QTimer>
+#include <QSound>   //开启音效需要在pro文件中包含multimedia
+#include <QMediaPlayer>
 
 MainScene::MainScene(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainScene)
 {
     ui->setupUi(this);
+    QMediaPlayer *titleBGM=new QMediaPlayer(this);
+    titleBGM->setMedia(QUrl::fromLocalFile("F:/code/QtProject/CoinFlip/res/TitleBGM.mp3"));
+    titleBGM->setVolume(50);
+    titleBGM->play();
     setFixedSize(320,588);  //设置固定大小
-    setWindowIcon(QIcon(":/animation/gold/res/Coin0001.png"));//设置窗口图标
+    setWindowIcon(QIcon(":/coins/res/Coin0001.png"));//设置窗口图标
     setWindowTitle(tr("来翻金币吧！"));
     connect(ui->actionQuit,&QAction::triggered,[=]()
     {
         close();
     });
+    //开始按钮音效
+    QSound *startSound=new QSound(":/wav/res/TapButtonSound.wav",this);
     //开始按钮
     MyPushButton *startButton=new MyPushButton(":/button/res/MenuSceneStartButton.png");
     startButton->setParent(this);   //让其在本窗口中显示
@@ -29,10 +37,15 @@ MainScene::MainScene(QWidget *parent)
     {
         //当关卡选择界面返回被按下，由于关卡选择界面唯一，所以只需要将其隐藏
         //下一次再进入时直接show就可以了
+        setGeometry(chooseScene->geometry());
+        titleBGM->play();
         show();
     });
     connect(startButton,&QPushButton::clicked,[=]()
     {
+        //播放音效
+        startSound->play();
+        titleBGM->stop();
         //做一个弹起特效
         startButton->zoomDownAnimation();   //弹
         startButton->zoomUpAnimation();     //起
@@ -40,7 +53,9 @@ MainScene::MainScene(QWidget *parent)
         //singleShot为QTimer的静态成员函数，相当于一个槽函数，能够实现定时短时间后使某对象发出某个动作
         QTimer::singleShot(180,this,[=]()
         {
+            //设置场景位置
             hide();     //自身隐藏
+            chooseScene->setGeometry(geometry());
             chooseScene->show();    //关卡选择界面显示
         });
     });

@@ -17,20 +17,19 @@
         <file>res/PlayLevelSceneBg.png</file>
         <file>res/Title.png</file>
         <file>res/BoardNode.png</file>
+        <file>res/LevelCompletedDialogBg.png</file>
     </qresource>
-    <qresource prefix="/animation/sliver">
-        <file>res/Coin0005.png</file>
-        <file>res/Coin0006.png</file>
-        <file>res/Coin0007.png</file>
-        <file>res/Coin0008.png</file>
+    <qresource prefix="/font">
+        <file>res/PixFont.ttf</file>
     </qresource>
-    <qresource prefix="/animation/gold">
+    <qresource prefix="/coins">
         <file>res/Coin0001.png</file>
         <file>res/Coin0002.png</file>
         <file>res/Coin0003.png</file>
         <file>res/Coin0004.png</file>
-    </qresource>
-    <qresource prefix="/font">
-        <file>res/PixFont.ttf</file>
+        <file>res/Coin0005.png</file>
+        <file>res/Coin0006.png</file>
+        <file>res/Coin0007.png</file>
+        <file>res/Coin0008.png</file>
     </qresource>
 </RCC>
