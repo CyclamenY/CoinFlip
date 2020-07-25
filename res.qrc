@@ -10,6 +10,7 @@
         <file>res/ConFlipSound.wav</file>
         <file>res/LevelWinSound.wav</file>
         <file>res/TapButtonSound.wav</file>
+        <file>res/TitleBGM.wav</file>
     </qresource>
     <qresource prefix="/background">
         <file>res/MenuSceneBg.png</file>

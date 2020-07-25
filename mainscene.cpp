@@ -6,16 +6,14 @@
 #include "mypushbutton.h"
 #include <QTimer>
 #include <QSound>   //开启音效需要在pro文件中包含multimedia
-#include <QMediaPlayer>
 
 MainScene::MainScene(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainScene)
 {
     ui->setupUi(this);
-    QMediaPlayer *titleBGM=new QMediaPlayer(this);
-    titleBGM->setMedia(QUrl::fromLocalFile("F:/code/QtProject/CoinFlip/res/TitleBGM.mp3"));
-    titleBGM->setVolume(50);
+    QSound *titleBGM=new QSound(":/wav/res/TitleBGM.wav",this);
+    titleBGM->setLoops(-1);
     titleBGM->play();
     setFixedSize(320,588);  //设置固定大小
     setWindowIcon(QIcon(":/coins/res/Coin0001.png"));//设置窗口图标
