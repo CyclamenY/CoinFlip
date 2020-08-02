@@ -13,7 +13,7 @@ class dataConfig : public QObject
 
     public:
         QMap<int,QVector<QVector<int>>> mData;   //创建一个关卡和关卡数据键值对
-
+        QVector<int> gameTime;
 
 
     signals:

@@ -21,6 +21,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(1,levelData);
+     gameTime.push_back(100);
 
 
      int array2[4][4] = {{1,0,1,1},
@@ -40,7 +41,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(2,levelData);
-
+     gameTime.push_back(100);
 
 
      int array3[4][4] = {  {0,0,0,0},
@@ -59,6 +60,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(3,levelData);
+     gameTime.push_back(80);
 
 
      int array4[4][4] = {   {0,1,1,1},
@@ -77,6 +79,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(4,levelData);
+     gameTime.push_back(75);
 
 
      int array5[4][4] = {  {1,0,0,1},
@@ -95,6 +98,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(5,levelData);
+     gameTime.push_back(70);
 
 
      int array6[4][4] = {   {1,0,0,1},
@@ -113,6 +117,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(6,levelData);
+     gameTime.push_back(70);
 
 
      int array7[4][4] = {   {0,1,1,1},
@@ -131,6 +136,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(7,levelData);
+     gameTime.push_back(80);
+
 
      int array8[4][4] = {  {0,1,0,1},
                            {1,0,0,0},
@@ -148,6 +155,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(8,levelData);
+     gameTime.push_back(80);
+
 
      int array9[4][4] = {   {1,0,1,0},
                             {1,0,1,0},
@@ -165,6 +174,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(9,levelData);
+     gameTime.push_back(80);
 
 
 
@@ -184,6 +194,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(10,levelData);
+     gameTime.push_back(80);
 
 
      int array11[4][4] = {  {0,1,1,0},
@@ -202,6 +213,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(11,levelData);
+     gameTime.push_back(85);
 
      int array12[4][4] = {  {0,1,1,0},
                             {0,0,0,0},
@@ -219,6 +231,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(12,levelData);
+     gameTime.push_back(90);
 
 
      int array13[4][4] = {    {0,1,1,0},
@@ -237,6 +250,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(13,levelData);
+     gameTime.push_back(90);
+
 
      int array14[4][4] = {    {1,0,1,1},
                               {0,1,0,1},
@@ -254,6 +269,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(14,levelData);
+     gameTime.push_back(90);
 
 
      int array15[4][4] = {   {0,1,0,1},
@@ -272,6 +288,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(15,levelData);
+     gameTime.push_back(90);
 
 
      int array16[4][4] = {   {0,1,1,0},
@@ -290,6 +307,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(16,levelData);
+     gameTime.push_back(100);
+
 
      int array17[4][4] = {  {0,1,1,1},
                             {0,1,0,0},
@@ -307,6 +326,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(17,levelData);
+     gameTime.push_back(100);
+
 
 
      int array18[4][4] = { {0,0,0,1},
@@ -325,6 +346,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(18,levelData);
+     gameTime.push_back(100);
+
 
      int array19[4][4] = {   {0,1,0,0},
                              {0,1,1,0},
@@ -342,6 +365,8 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(19,levelData);
+     gameTime.push_back(100);
+
 
      int array20[4][4] = {  {0,0,0,0},
                             {0,0,0,0},
@@ -359,6 +384,7 @@ dataConfig::dataConfig(QObject *parent) : QObject(parent)
      }
 
      mData.insert(20,levelData);
+     gameTime.push_back(100);
 
 
      //测试数据

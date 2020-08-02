@@ -55,6 +55,8 @@ MainScene::MainScene(QWidget *parent)
             hide();     //自身隐藏
             chooseScene->setGeometry(geometry());
             chooseScene->show();    //关卡选择界面显示
+            chooseScene->chooseBGM->setLoops(-1);
+            chooseScene->chooseBGM->play();
         });
     });
 }

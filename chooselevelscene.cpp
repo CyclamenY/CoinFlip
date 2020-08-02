@@ -40,6 +40,7 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
         QTimer::singleShot(180,this,[=]()
         {
             emit chooseSceneBack();
+            chooseBGM->stop();
             hide(); //自身隐藏，不需要析构
         });
     });
@@ -77,6 +78,7 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
 //            QString str=QString("选择第%1关").arg(i+1);
 //            qDebug()<<str;
             chooseSound->play();
+            chooseBGM->stop();
             //随用随创建的对象，与关卡选择界面的编写理念不一样
             //所以在游戏界面返回时的操作也会不一样，详见下面
             playScene=new PlayScene(i+1);
@@ -89,8 +91,9 @@ ChooseLevelScene::ChooseLevelScene(QWidget *parent) : QMainWindow(parent)
             connect(playScene,&PlayScene::playSceneBack,[=]()
             {
                 setGeometry(playScene->geometry());
-                delete playScene;
                 show();
+                chooseBGM->play();
+                delete playScene;
                 playScene=nullptr;
                 //当点击返回时，程序会直接删除游戏场景
                 //以便在下一次进入时创建一个新的游戏场景

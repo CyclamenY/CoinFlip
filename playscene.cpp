@@ -30,6 +30,9 @@ PlayScene::PlayScene(int levelNum)
         close();
     });
     //添加音效
+        //设置音效
+    playBGM->setLoops(-1);
+    playBGM->play();
         //添加翻金币音效
     QSound *flipSound=new QSound(":/wav/res/ConFlipSound.wav",this);
         //添加返回按键音效
@@ -47,6 +50,7 @@ PlayScene::PlayScene(int levelNum)
         //这里需要返回到主场景，需要发送一个信号通知关卡选择场景让其显示
         QTimer::singleShot(180,this,[=]()
         {
+            playBGM->stop();
             emit playSceneBack();
             //hide();//这里不要隐藏，因为在选择界面会直接析构掉这个画面，隐藏了程序会报错的
         });
@@ -83,7 +87,12 @@ PlayScene::PlayScene(int levelNum)
     winLabel->setGeometry(0,0,winMap.width(),winMap.height());
     winLabel->setPixmap(winMap);
     winLabel->move((width()-winMap.width())/2,-winMap.height());
-
+    //失败图片加载
+    QPixmap failMap(":/background/res/Fail.png");
+    failLabel->setGeometry(0,0,failMap.width(),failMap.height());
+    failLabel->setPixmap(failMap);
+    failLabel->move((width()-failMap.width())/2,-failMap.height());
+    //放置金币背景板
     QPixmap pixmap(":/background/res/BoardNode.png");
     for(int i=0;i<4;++i)
     {
@@ -132,6 +141,33 @@ PlayScene::PlayScene(int levelNum)
             });
         }
     }
+    levelTime=config.gameTime[levelIndex-1];    //读入关卡时间
+    QLabel *timeLabel=new QLabel(QString::number(levelTime),this);
+    timeLabel->setAlignment(Qt::AlignHCenter);
+    timeLabel->setPalette(palette);
+    timeLabel->setFont(font);
+    timeLabel->setGeometry(130,height()-150,60,50);
+    //定时器初始化
+    gameTimer->start(std::chrono::seconds(1));
+    connect(gameTimer,&QTimer::timeout,[=]()
+    {
+        char timeRemain[10];
+        memset(timeRemain,0,10);
+        itoa(levelTime,timeRemain,10);
+        timeLabel->setText(timeRemain);
+        if(--levelTime<=0)
+        {
+            failAnimation();
+            //禁用所有金币按钮
+            for(int i=0;i<4;++i)
+            {
+                for(int j=0;j<4;++j)
+                {
+                    buttonCoin[i][j]->isWin=true;
+                }
+            }
+        }
+    });
 }
 
 void PlayScene::paintEvent(QPaintEvent *event)
@@ -202,7 +238,9 @@ void PlayScene::changeRoundCoin(MyCoin *coin)
         {
             //qDebug()<<"胜利";
             //播放胜利音效
+            playBGM->stop();
             winSound->play();
+            gameTimer->stop();
             for(int i=0;i<4;++i)
             {
                 for(int j=0;j<4;++j)
@@ -226,6 +264,23 @@ void PlayScene::winAnimation()
     animation->setStartValue(QRect(winLabel->x(),winLabel->y(),winLabel->width(),winLabel->height()));
     //设置结束位置
     animation->setEndValue(QRect(winLabel->x(),winLabel->y()+175,winLabel->width(),winLabel->height()));
+    //设置缓和曲线
+    animation->setEasingCurve(QEasingCurve::OutBounce);
+    //执行动画
+    animation->start();
+}
+
+void PlayScene::failAnimation()
+{
+
+    //将胜利的图片移动下来
+    QPropertyAnimation *animation=new QPropertyAnimation(failLabel,"geometry");
+    //设置时间间隔
+    animation->setDuration(1000);
+    //设置开始位置
+    animation->setStartValue(QRect(failLabel->x(),failLabel->y(),failLabel->width(),failLabel->height()));
+    //设置结束位置
+    animation->setEndValue(QRect(failLabel->x(),failLabel->y()+175,failLabel->width(),failLabel->height()));
     //设置缓和曲线
     animation->setEasingCurve(QEasingCurve::OutBounce);
     //执行动画

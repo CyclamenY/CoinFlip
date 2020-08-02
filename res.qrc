@@ -11,6 +11,8 @@
         <file>res/LevelWinSound.wav</file>
         <file>res/TapButtonSound.wav</file>
         <file>res/TitleBGM.wav</file>
+        <file>res/ChooseBGM.wav</file>
+        <file>res/playScene.wav</file>
     </qresource>
     <qresource prefix="/background">
         <file>res/MenuSceneBg.png</file>
@@ -19,6 +21,7 @@
         <file>res/Title.png</file>
         <file>res/BoardNode.png</file>
         <file>res/LevelCompletedDialogBg.png</file>
+        <file>res/Fail.png</file>
     </qresource>
     <qresource prefix="/font">
         <file>res/PixFont.ttf</file>

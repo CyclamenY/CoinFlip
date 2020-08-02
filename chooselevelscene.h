@@ -10,6 +10,7 @@ class ChooseLevelScene : public QMainWindow
     public:
         explicit ChooseLevelScene(QWidget *parent = nullptr);
         void paintEvent(QPaintEvent *event) override;
+        QSound *chooseBGM=new QSound(":/wav/res/ChooseBGM.wav",this);
     private:
         //游戏场景对象指针
         PlayScene *playScene=nullptr;
