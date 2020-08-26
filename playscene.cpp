@@ -155,9 +155,10 @@ PlayScene::PlayScene(int levelNum)
         memset(timeRemain,0,10);
         itoa(levelTime,timeRemain,10);
         timeLabel->setText(timeRemain);
-        if(--levelTime<=0)
+        if(levelTime--<=0)
         {
             failAnimation();
+            gameTimer->stop();
             //禁用所有金币按钮
             for(int i=0;i<4;++i)
             {
